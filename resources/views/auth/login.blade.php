@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Login - Kopi Senja')
+@section('title', 'Login - ' . config('app.name'))
 @section('content')
 
 <div class="min-h-screen flex">
@@ -11,20 +11,20 @@
 
         <div class="relative z-10 flex flex-col justify-between p-12 text-amber-50 w-full">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-amber-950/50">☕</div>
-                <span class="font-extrabold text-xl tracking-tight">Kopi Senja</span>
+                <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-amber-950/50">🏪</div>
+                <span class="font-extrabold text-xl tracking-tight">{{ config('app.name') }}</span>
             </div>
 
             <div>
                 <h1 class="text-4xl font-extrabold leading-tight mb-4">
-                    Kelola bisnis kopi kamu,<br>dari satu tempat.
+                    Kelola bisnis kamu,<br>dari satu tempat.
                 </h1>
                 <p class="text-amber-200/80 text-lg max-w-md">
                     Kasir, stok bahan baku, laporan laba rugi, sampai promo — semua toko, satu dashboard.
                 </p>
             </div>
 
-            <p class="text-xs text-amber-300/60">&copy; {{ date('Y') }} Kopi Senja Management System</p>
+            <p class="text-xs text-amber-300/60">&copy; {{ date('Y') }} {{ config('app.name') }} Management System</p>
         </div>
     </div>
 
@@ -32,8 +32,8 @@
     <div class="flex-1 flex items-center justify-center bg-stone-50 p-8">
         <div class="w-full max-w-sm">
             <div class="lg:hidden flex items-center gap-2 mb-8 justify-center">
-                <div class="w-9 h-9 rounded-xl bg-amber-800 flex items-center justify-center text-lg">☕</div>
-                <span class="font-extrabold text-lg text-stone-800">Kopi Senja</span>
+                <div class="w-9 h-9 rounded-xl bg-amber-800 flex items-center justify-center text-lg">🏪</div>
+                <span class="font-extrabold text-lg text-stone-800">{{ config('app.name') }}</span>
             </div>
 
             <h2 class="text-2xl font-bold text-stone-800">Selamat datang kembali</h2>

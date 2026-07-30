@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'UMKM Kopi')</title>
+    <title>@yield('title', config('app.name'))</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,12 +20,12 @@
 <div class="min-h-screen flex">
 
     {{-- SIDEBAR --}}
-    <aside class="w-64 flex-shrink-0 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50 flex flex-col fixed inset-y-0">
+    <aside class="no-print w-64 flex-shrink-0 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50 flex flex-col fixed inset-y-0">
         <div class="p-5 border-b border-amber-800/60">
             <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-lg shadow-lg shadow-amber-900/40">☕</div>
+                <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-lg shadow-lg shadow-amber-900/40">🏪</div>
                 <div>
-                    <h1 class="font-extrabold text-base leading-none tracking-tight">Kopi Senja</h1>
+                    <h1 class="font-extrabold text-base leading-none tracking-tight">{{ config('app.name') }}</h1>
                     <p class="text-[11px] text-amber-300/80 leading-none mt-1">Management System</p>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                 {!! $navItem('stores.transactions.create', 'Kasir', '🧾', $store) !!}
                 {!! $navItem('stores.transactions.index', 'Riwayat Transaksi', '📋', $store) !!}
                 {!! $navItem('stores.reports.index', 'Laporan', '🗂️', $store) !!}
-                {!! $navItem('stores.products.index', 'Menu', '☕', $store) !!}
+                {!! $navItem('stores.products.index', 'Menu', '🛍️', $store) !!}
                 {!! $navItem('stores.categories.index', 'Kategori', '🏷️', $store) !!}
                 {!! $navItem('stores.stock-items.index', 'Management Stok', '📦', $store) !!}
                 {!! $navItem('stores.units.index', 'Satuan', '📏', $store) !!}
@@ -94,7 +94,7 @@
     {{-- MAIN --}}
     <div class="flex-1 ml-64 min-h-screen flex flex-col">
         {{-- TOP BAR --}}
-        <header class="bg-white border-b border-stone-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
+        <header class="no-print bg-white border-b border-stone-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
             <div class="text-sm text-stone-500">
                 @if(isset($store))
                     <span class="font-medium text-stone-700">{{ $store->name }}</span>

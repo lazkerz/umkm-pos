@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Daftar - Kopi Senja')
+@section('title', 'Daftar - ' . config('app.name'))
 @section('content')
 
 <div class="min-h-screen flex">
@@ -11,20 +11,20 @@
 
         <div class="relative z-10 flex flex-col justify-between p-12 text-amber-50 w-full">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-amber-950/50">☕</div>
-                <span class="font-extrabold text-xl tracking-tight">Kopi Senja</span>
+                <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg shadow-amber-950/50">🏪</div>
+                <span class="font-extrabold text-xl tracking-tight">{{ config('app.name') }}</span>
             </div>
 
             <div>
                 <h1 class="text-4xl font-extrabold leading-tight mb-4">
-                    Mulai kelola toko<br>kopi kamu hari ini.
+                    Mulai kelola toko<br>kamu hari ini.
                 </h1>
                 <p class="text-amber-200/80 text-lg max-w-md">
                     Daftar sebagai Owner, lalu buat toko pertama kamu dalam hitungan menit.
                 </p>
             </div>
 
-            <p class="text-xs text-amber-300/60">&copy; {{ date('Y') }} Kopi Senja Management System</p>
+            <p class="text-xs text-amber-300/60">&copy; {{ date('Y') }} {{ config('app.name') }} Management System</p>
         </div>
     </div>
 
@@ -32,12 +32,12 @@
     <div class="flex-1 flex items-center justify-center bg-stone-50 p-8">
         <div class="w-full max-w-sm">
             <div class="lg:hidden flex items-center gap-2 mb-8 justify-center">
-                <div class="w-9 h-9 rounded-xl bg-amber-800 flex items-center justify-center text-lg">☕</div>
-                <span class="font-extrabold text-lg text-stone-800">Kopi Senja</span>
+                <div class="w-9 h-9 rounded-xl bg-amber-800 flex items-center justify-center text-lg">🏪</div>
+                <span class="font-extrabold text-lg text-stone-800">{{ config('app.name') }}</span>
             </div>
 
             <h2 class="text-2xl font-bold text-stone-800">Daftar sebagai Owner</h2>
-            <p class="text-sm text-stone-500 mt-1 mb-8">Bikin akun buat kelola toko kopi kamu</p>
+            <p class="text-sm text-stone-500 mt-1 mb-8">Bikin akun buat kelola toko kamu</p>
 
             @if($errors->any())
                 <div class="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-lg text-sm">

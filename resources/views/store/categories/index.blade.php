@@ -37,7 +37,7 @@
         <h2 class="font-bold mb-3">Tambah Kategori</h2>
         <form method="POST" action="{{ route('stores.categories.store', $store) }}" class="space-y-3">
             @csrf
-            <input type="text" name="name" placeholder="Misal: Kopi Susu, Non-Kopi" required class="w-full border rounded px-3 py-1.5 text-sm">
+            <input type="text" name="name" placeholder="Misal: Makanan, Minuman, Aksesoris" required class="w-full border rounded px-3 py-1.5 text-sm">
             <button type="submit" class="w-full bg-amber-800 text-white py-2 rounded text-sm hover:bg-amber-900">Tambah</button>
         </form>
     </div>

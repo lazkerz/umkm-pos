@@ -59,7 +59,7 @@
             @csrf
             <div>
                 <label class="block text-xs font-medium mb-1">Nama Bahan</label>
-                <input type="text" name="name" placeholder="Biji Kopi Arabica" required class="w-full border rounded px-3 py-1.5 text-sm">
+                <input type="text" name="name" placeholder="Bahan Baku A" required class="w-full border rounded px-3 py-1.5 text-sm">
             </div>
             <div>
                 <label class="block text-xs font-medium mb-1">Satuan</label>
