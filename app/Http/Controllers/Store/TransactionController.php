@@ -10,6 +10,7 @@ use App\Models\StockItem;
 use App\Models\StockMovement;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Support\StoreCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -34,16 +35,41 @@ class TransactionController extends Controller
     {
         $channel = $request->input('channel', 'offline'); // 'offline' or 'online'
 
-        $products = $store->products()->available()->with('category')->get();
+        $products = StoreCache::products($store->id);
+        $categories = StoreCache::categories($store->id);
 
-        $activePromotions = $store->promotions()
-            ->where('is_active', true)
-            ->where('start_date', '<=', now()->toDateString())
-            ->where('end_date', '>=', now()->toDateString())
-            ->whereIn('channel', [$channel, 'both'])
-            ->get();
+        $activePromotions = StoreCache::activePromotions($store->id)
+            ->filter(fn ($promotion) => $promotion->isValidNow() && in_array($promotion->channel, [$channel, 'both']));
 
-        return view('store.transactions.create', compact('store', 'channel', 'products', 'activePromotions'));
+        // Stok saat ini query langsung (tidak di-cache) karena berubah tiap ada transaksi -
+        // dipakai cuma untuk warning non-blocking di sisi client, validasi final tetap di server saat submit.
+        $stockQuantities = StockItem::where('store_id', $store->id)->pluck('quantity', 'id');
+
+        $productsForJs = $products->map(fn ($product) => [
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => (float) $product->price,
+            'category_id' => $product->category_id,
+            'recipes' => $product->recipes->map(fn ($recipe) => [
+                'stock_item_id' => $recipe->stock_item_id,
+                'quantity_needed' => (float) $recipe->quantity_needed,
+                'available_qty' => (float) ($stockQuantities[$recipe->stock_item_id] ?? 0),
+            ])->values(),
+        ])->values();
+
+        $customers = $store->customers()->orderBy('name')->get(['id', 'name', 'phone']);
+
+        $promotionsForJs = $activePromotions->map(fn ($promotion) => [
+            'id' => $promotion->id,
+            'name' => $promotion->name,
+            'type' => $promotion->type,
+            'value' => (float) $promotion->value,
+        ])->values();
+
+        return view('store.transactions.create', compact(
+            'store', 'channel', 'products', 'categories', 'activePromotions',
+            'productsForJs', 'customers', 'promotionsForJs'
+        ));
     }
 
     /**
@@ -196,6 +222,12 @@ class TransactionController extends Controller
 
             return $transaction;
         });
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'redirect' => route('stores.transactions.show', [$store, $transaction]),
+            ]);
+        }
 
         return redirect()
             ->route('stores.transactions.show', [$store, $transaction])

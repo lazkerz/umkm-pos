@@ -42,9 +42,13 @@
         @endif
     </div>
 
+    <button type="button" onclick="window.print()" class="no-print w-full mt-4 text-sm border border-amber-300 text-amber-800 rounded py-2 hover:bg-amber-50">
+        🖨️ Cetak Struk
+    </button>
+
     @if($transaction->status === 'completed')
         <form method="POST" action="{{ route('stores.transactions.cancel', [$store, $transaction]) }}"
-            onsubmit="return confirm('Batalkan transaksi ini?')" class="mt-4">
+            onsubmit="return confirm('Batalkan transaksi ini?')" class="no-print mt-2">
             @csrf
             <button class="w-full text-red-600 text-sm border border-red-300 rounded py-2 hover:bg-red-50">
                 Batalkan Transaksi
@@ -52,7 +56,7 @@
         </form>
     @endif
 
-    <a href="{{ route('stores.transactions.index', $store) }}" class="block text-center text-sm text-amber-800 mt-3 hover:underline">
+    <a href="{{ route('stores.transactions.index', $store) }}" class="no-print block text-center text-sm text-amber-800 mt-3 hover:underline">
         ← Kembali ke Riwayat
     </a>
 </div>

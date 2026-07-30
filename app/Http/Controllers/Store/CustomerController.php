@@ -24,7 +24,11 @@ class CustomerController extends Controller
             'email' => ['nullable', 'email', 'max:255'],
         ]);
 
-        $store->customers()->create($validated);
+        $customer = $store->customers()->create($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json($customer, 201);
+        }
 
         return back()->with('success', 'Customer berhasil ditambahkan.');
     }
