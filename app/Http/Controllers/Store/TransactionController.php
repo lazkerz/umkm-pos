@@ -34,40 +34,43 @@ class TransactionController extends Controller
     public function create(Request $request, Store $store)
     {
         $channel = $request->input('channel', 'offline'); // 'offline' or 'online'
+        $today = now()->toDateString();
 
-        $products = StoreCache::products($store->id);
         $categories = StoreCache::categories($store->id);
 
-        $activePromotions = StoreCache::activePromotions($store->id)
-            ->filter(fn ($promotion) => $promotion->isValidNow() && in_array($promotion->channel, [$channel, 'both']));
+        $activePromotions = collect(StoreCache::activePromotions($store->id))
+            ->filter(fn (array $promotion) => $promotion['is_active']
+                && $promotion['start_date'] <= $today
+                && $promotion['end_date'] >= $today
+                && in_array($promotion['channel'], [$channel, 'both']));
 
         // Stok saat ini query langsung (tidak di-cache) karena berubah tiap ada transaksi -
         // dipakai cuma untuk warning non-blocking di sisi client, validasi final tetap di server saat submit.
         $stockQuantities = StockItem::where('store_id', $store->id)->pluck('quantity', 'id');
 
-        $productsForJs = $products->map(fn ($product) => [
-            'id' => $product->id,
-            'name' => $product->name,
-            'price' => (float) $product->price,
-            'category_id' => $product->category_id,
-            'recipes' => $product->recipes->map(fn ($recipe) => [
-                'stock_item_id' => $recipe->stock_item_id,
-                'quantity_needed' => (float) $recipe->quantity_needed,
-                'available_qty' => (float) ($stockQuantities[$recipe->stock_item_id] ?? 0),
+        $productsForJs = collect(StoreCache::products($store->id))->map(fn (array $product) => [
+            'id' => $product['id'],
+            'name' => $product['name'],
+            'price' => $product['price'],
+            'category_id' => $product['category_id'],
+            'recipes' => collect($product['recipes'])->map(fn (array $recipe) => [
+                'stock_item_id' => $recipe['stock_item_id'],
+                'quantity_needed' => $recipe['quantity_needed'],
+                'available_qty' => (float) ($stockQuantities[$recipe['stock_item_id']] ?? 0),
             ])->values(),
         ])->values();
 
         $customers = $store->customers()->orderBy('name')->get(['id', 'name', 'phone']);
 
-        $promotionsForJs = $activePromotions->map(fn ($promotion) => [
-            'id' => $promotion->id,
-            'name' => $promotion->name,
-            'type' => $promotion->type,
-            'value' => (float) $promotion->value,
+        $promotionsForJs = $activePromotions->map(fn (array $promotion) => [
+            'id' => $promotion['id'],
+            'name' => $promotion['name'],
+            'type' => $promotion['type'],
+            'value' => $promotion['value'],
         ])->values();
 
         return view('store.transactions.create', compact(
-            'store', 'channel', 'products', 'categories', 'activePromotions',
+            'store', 'channel', 'categories', 'activePromotions',
             'productsForJs', 'customers', 'promotionsForJs'
         ));
     }

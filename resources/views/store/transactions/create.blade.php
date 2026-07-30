@@ -4,7 +4,7 @@
 
 <div x-data="posCart({
         products: @js($productsForJs),
-        categories: @js($categories->map(fn ($c) => ['id' => $c->id, 'name' => $c->name])),
+        categories: @js($categories),
         customers: @js($customers),
         promotions: @js($promotionsForJs),
         channel: @js($channel),
