@@ -14,12 +14,12 @@ return new class extends Migration
             $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
             $table->enum('channel', ['offline', 'online']);
             $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
-            $table->foreignId('staff_id')->nullable()->constrained('users')->nullOnDelete(); // kasir yang proses
+            $table->foreignId('staff_id')->nullable()->constrained('users')->nullOnDelete(); 
             $table->foreignId('promotion_id')->nullable()->constrained('promotions')->nullOnDelete();
             $table->decimal('subtotal', 12, 2);
             $table->decimal('discount', 12, 2)->default(0);
             $table->decimal('total', 12, 2);
-            $table->string('payment_method')->nullable(); // cash, qris, transfer, dll
+            $table->string('payment_method')->nullable(); 
             $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
             $table->timestamps();
         });

@@ -21,7 +21,7 @@ class DemoSeeder extends Seeder
 {
     public function run(): void
     {
-        // ==== OWNER ====
+        
         $owner = User::firstOrCreate(
             ['email' => 'owner@umkmkopi.test'],
             [
@@ -32,19 +32,19 @@ class DemoSeeder extends Seeder
             ]
         );
 
-        // ==== TOKO 1 ====
+        
         $store1 = Store::firstOrCreate(
             ['owner_id' => $owner->id, 'name' => 'Kopi Senja - Cabang Medan'],
             ['address' => 'Jl. Sisingamangaraja No. 10, Medan', 'phone' => '0614512345']
         );
 
-        // ==== TOKO 2 ====
+        
         $store2 = Store::firstOrCreate(
             ['owner_id' => $owner->id, 'name' => 'Kopi Senja - Cabang Batam'],
             ['address' => 'Jl. Sudirman No. 5, Batam', 'phone' => '0778112233']
         );
 
-        // ==== STAFF (kasir) untuk toko 1 ====
+        
         $staff1 = User::firstOrCreate(
             ['email' => 'kasir.medan@umkmkopi.test'],
             [
@@ -66,7 +66,7 @@ class DemoSeeder extends Seeder
 
     private function seedStoreData(Store $store, string $suffix = ''): void
     {
-        // ==== SATUAN CUSTOM (contoh: toko ini bikin satuan sendiri "Shot") ====
+        
         $shotUnit = Unit::firstOrCreate(
             ['store_id' => $store->id, 'symbol' => 'shot'],
             ['name' => 'Shot Espresso']
@@ -76,11 +76,11 @@ class DemoSeeder extends Seeder
         $mlUnit = Unit::where('symbol', 'ml')->whereNull('store_id')->first();
         $pcsUnit = Unit::where('symbol', 'pcs')->whereNull('store_id')->first();
 
-        // ==== KATEGORI ====
+        
         $catKopi = Category::firstOrCreate(['store_id' => $store->id, 'name' => 'Kopi Susu']);
         $catNonKopi = Category::firstOrCreate(['store_id' => $store->id, 'name' => 'Non-Kopi']);
 
-        // ==== STOCK ITEMS (bahan baku) ====
+        
         $bijiKopi = StockItem::firstOrCreate(
             ['store_id' => $store->id, 'name' => 'Biji Kopi Arabica'],
             ['unit_id' => $gramUnit->id, 'quantity' => 5000, 'minimum_stock' => 1000]
@@ -98,10 +98,10 @@ class DemoSeeder extends Seeder
 
         $gulaAren = StockItem::firstOrCreate(
             ['store_id' => $store->id, 'name' => 'Gula Aren'],
-            ['unit_id' => $mlUnit->id, 'quantity' => 30, 'minimum_stock' => 500] // sengaja rendah buat contoh alert stok menipis
+            ['unit_id' => $mlUnit->id, 'quantity' => 30, 'minimum_stock' => 500] 
         );
 
-        // ==== MENU / PRODUCTS ====
+        
         $esKopiSusu = Product::firstOrCreate(
             ['store_id' => $store->id, 'name' => 'Es Kopi Susu Gula Aren' . $suffix],
             ['category_id' => $catKopi->id, 'price' => 18000, 'description' => 'Kopi susu gula aren khas Kopi Senja']
@@ -117,7 +117,7 @@ class DemoSeeder extends Seeder
             ['category_id' => $catNonKopi->id, 'price' => 12000]
         );
 
-        // ==== RESEP/BOM ====
+        
         ProductRecipe::firstOrCreate(
             ['product_id' => $esKopiSusu->id, 'stock_item_id' => $bijiKopi->id],
             ['quantity_needed' => 18]
@@ -139,7 +139,7 @@ class DemoSeeder extends Seeder
             ['quantity_needed' => 9]
         );
 
-        // ==== PROMO ====
+        
         Promotion::firstOrCreate(
             ['store_id' => $store->id, 'name' => 'Promo Buka Cabang'],
             [
@@ -152,13 +152,13 @@ class DemoSeeder extends Seeder
             ]
         );
 
-        // ==== CUSTOMER ====
+        
         $customer = Customer::firstOrCreate(
             ['store_id' => $store->id, 'name' => 'Andi Wijaya'],
             ['phone' => '081211112222']
         );
 
-        // ==== SAMPLE TRANSAKSI (histori, biar dashboard ga kosong) ====
+        
         for ($i = 0; $i < 5; $i++) {
             $subtotal = $esKopiSusu->price * 2;
             $transaction = Transaction::create([
@@ -185,7 +185,7 @@ class DemoSeeder extends Seeder
             ]);
         }
 
-        // ==== SAMPLE EXPENSE ====
+        
         Expense::firstOrCreate(
             ['store_id' => $store->id, 'category' => 'Sewa Tempat', 'expense_date' => now()->startOfMonth()],
             [

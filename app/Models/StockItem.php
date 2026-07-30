@@ -45,7 +45,7 @@ class StockItem extends Model
         return $this->hasMany(StockDistribution::class);
     }
 
-    // Menu apa aja yang pakai bahan baku ini (kebalikan dari Product::recipes)
+    
     public function recipeUsages()
     {
         return $this->hasMany(ProductRecipe::class);

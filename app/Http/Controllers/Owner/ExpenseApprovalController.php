@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class ExpenseApprovalController extends Controller
 {
-    // List pengeluaran yang masih pending untuk toko ini
     public function index(Store $store)
     {
         $pendingExpenses = $store->expenses()
@@ -27,7 +26,6 @@ class ExpenseApprovalController extends Controller
         return view('owner.expenses.index', compact('store', 'pendingExpenses', 'history'));
     }
 
-    // "Approve / Input Menu" bagian approve pengeluaran
     public function approve(Request $request, Store $store, Expense $expense)
     {
         abort_unless($expense->store_id === $store->id, 404);

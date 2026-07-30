@@ -21,7 +21,7 @@ class Unit extends Model
         return $this->hasMany(StockItem::class);
     }
 
-    // Units yang bisa dipilih toko tertentu: default (store_id null) + custom milik toko itu sendiri
+    
     public function scopeAvailableFor($query, int $storeId)
     {
         return $query->where(function ($q) use ($storeId) {

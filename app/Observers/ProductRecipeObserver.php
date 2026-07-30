@@ -20,7 +20,7 @@ class ProductRecipeObserver
 
     private function forget(ProductRecipe $recipe): void
     {
-        // Recipes are eager-loaded as part of the cached product payload.
+        
         $storeId = $recipe->product?->store_id
             ?? Product::find($recipe->product_id)?->store_id;
 

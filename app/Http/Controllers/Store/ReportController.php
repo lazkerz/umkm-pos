@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
-    // Halaman laporan - pilih periode, lihat ringkasan, tombol export
+    
     public function index(Request $request, Store $store)
     {
         [$start, $end, $periodLabel, $period] = $this->resolvePeriod($request);

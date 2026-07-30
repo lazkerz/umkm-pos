@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
-    // List satuan yang bisa dipakai toko ini: default global + custom milik toko sendiri
+    
     public function index(Store $store)
     {
         $defaultUnits = Unit::whereNull('store_id')->orderBy('name')->get();
@@ -18,7 +18,7 @@ class UnitController extends Controller
         return view('store.units.index', compact('store', 'defaultUnits', 'customUnits'));
     }
 
-    // Toko bikin satuan custom sendiri (misal: "Scoop", "Shot", "Cup 250ml")
+    
     public function store(Request $request, Store $store)
     {
         $validated = $request->validate([
@@ -39,7 +39,7 @@ class UnitController extends Controller
     {
         abort_unless($unit->store_id === $store->id, 403, 'Satuan default tidak bisa dihapus, hanya bisa dihapus kalau ini satuan custom milik toko sendiri.');
 
-        // Cek dulu apakah masih dipakai stock_items
+        
         if ($unit->stockItems()->exists()) {
             return back()->withErrors(['unit' => 'Satuan ini masih dipakai oleh item stok, tidak bisa dihapus.']);
         }

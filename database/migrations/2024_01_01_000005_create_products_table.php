@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 12, 2);
             $table->string('image')->nullable();
-            $table->boolean('is_available')->default(true); // bisa dipakai untuk stop selling kalau stok habis
+            $table->boolean('is_available')->default(true); 
             $table->timestamps();
         });
     }

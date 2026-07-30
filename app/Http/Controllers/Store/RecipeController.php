@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
-    // List resep untuk 1 menu tertentu
+    
     public function index(Store $store, Product $product)
     {
         abort_unless($product->store_id === $store->id, 404);
@@ -21,7 +21,7 @@ class RecipeController extends Controller
         return view('store.recipes.index', compact('store', 'product', 'recipes', 'availableStockItems'));
     }
 
-    // Tambah 1 baris resep: menu ini butuh bahan X sebanyak Y per 1 unit terjual
+    
     public function store(Request $request, Store $store, Product $product)
     {
         abort_unless($product->store_id === $store->id, 404);
@@ -31,7 +31,7 @@ class RecipeController extends Controller
             'quantity_needed' => ['required', 'numeric', 'min:0.001'],
         ]);
 
-        // Pastikan stock item memang milik toko yang sama
+        
         $stockItem = $store->stockItems()->findOrFail($validated['stock_item_id']);
 
         $recipe = ProductRecipe::updateOrCreate(

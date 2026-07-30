@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->foreignId('stock_item_id')->constrained('stock_items')->cascadeOnDelete();
-            // Berapa banyak stock_item terpakai untuk 1 unit product terjual
-            // Contoh: Es Kopi Susu -> Biji Kopi 18 gram, Susu UHT 100 ml, Cup 16oz 1 pcs
+            
+            
             $table->decimal('quantity_needed', 12, 3);
             $table->timestamps();
 

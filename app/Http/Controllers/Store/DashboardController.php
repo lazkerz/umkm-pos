@@ -24,7 +24,7 @@ class DashboardController extends Controller
             default => [now()->startOfMonth(), now()->endOfMonth()],
         };
 
-        // Report Penjualan
+        
         $salesReport = $store->transactions()
             ->completed()
             ->whereBetween('created_at', [$start, $end])
@@ -50,7 +50,7 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // Data Customer
+        
         $totalCustomers = $store->customers()->count();
         $newCustomersThisPeriod = $store->customers()
             ->whereBetween('created_at', [$start, $end])

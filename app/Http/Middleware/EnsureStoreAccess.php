@@ -22,7 +22,7 @@ class EnsureStoreAccess
         $user = $request->user();
         $store = $request->route('store');
 
-        // Kalau parameter store belum di-resolve jadi model, cari manual
+        
         if ($store && ! $store instanceof Store) {
             $store = Store::findOrFail($store);
         }

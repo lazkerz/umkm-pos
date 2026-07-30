@@ -80,7 +80,7 @@ class Store extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    // ==== Dashboard helper accessors (bisa dipakai untuk "Laba Rugi", "Store Performance") ====
+    
 
     public function scopeActive($query)
     {

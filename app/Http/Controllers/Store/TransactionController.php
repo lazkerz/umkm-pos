@@ -19,7 +19,7 @@ class TransactionController extends Controller
 {
     public function index(Request $request, Store $store)
     {
-        $channel = $request->input('channel'); // filter optional: offline/online
+        $channel = $request->input('channel'); 
 
         $transactions = $store->transactions()
             ->with(['customer', 'staff', 'items.product'])
@@ -30,10 +30,10 @@ class TransactionController extends Controller
         return view('store.transactions.index', compact('store', 'transactions', 'channel'));
     }
 
-    // Halaman kasir: "Menu > Offline/Online > pilihan menu + promo (jika ada) > input"
+    
     public function create(Request $request, Store $store)
     {
-        $channel = $request->input('channel', 'offline'); // 'offline' or 'online'
+        $channel = $request->input('channel', 'offline'); 
         $today = now()->toDateString();
 
         $categories = StoreCache::categories($store->id);
@@ -44,8 +44,8 @@ class TransactionController extends Controller
                 && $promotion['end_date'] >= $today
                 && in_array($promotion['channel'], [$channel, 'both']));
 
-        // Stok saat ini query langsung (tidak di-cache) karena berubah tiap ada transaksi -
-        // dipakai cuma untuk warning non-blocking di sisi client, validasi final tetap di server saat submit.
+        
+        
         $stockQuantities = StockItem::where('store_id', $store->id)->pluck('quantity', 'id');
 
         $productsForJs = collect(StoreCache::products($store->id))->map(fn (array $product) => [
@@ -108,9 +108,9 @@ class TransactionController extends Controller
             $subtotal = 0;
             $itemsToCreate = [];
 
-            // Akumulasi total bahan baku yang perlu dipotong, digabung per stock_item_id
-            // (jaga-jaga kalau 2 menu beda pakai bahan baku yang sama, misal sama-sama pakai Susu UHT)
-            $stockToDeduct = []; // [stock_item_id => total_quantity_needed]
+            
+            
+            $stockToDeduct = []; 
 
             foreach ($validated['items'] as $item) {
                 $product = $products->get($item['product_id']);
@@ -131,16 +131,16 @@ class TransactionController extends Controller
                     'subtotal' => $lineSubtotal,
                 ];
 
-                // Hitung kebutuhan bahan baku dari resep menu ini
+                
                 foreach ($product->recipes as $recipe) {
                     $needed = $recipe->quantity_needed * $item['quantity'];
                     $stockToDeduct[$recipe->stock_item_id] = ($stockToDeduct[$recipe->stock_item_id] ?? 0) + $needed;
                 }
             }
 
-            // Validasi & potong stok bahan baku (kalau menu punya resep)
+            
             if (! empty($stockToDeduct)) {
-                // Lock baris stock_items biar ga race condition kalau ada 2 transaksi bersamaan
+                
                 $stockItems = StockItem::whereIn('id', array_keys($stockToDeduct))
                     ->where('store_id', $store->id)
                     ->lockForUpdate()
@@ -151,7 +151,7 @@ class TransactionController extends Controller
                     $stockItem = $stockItems->get($stockItemId);
 
                     if (! $stockItem) {
-                        continue; // resep nunjuk ke stock_item yang udah dihapus - skip
+                        continue; 
                     }
 
                     if ($stockItem->quantity < $qtyNeeded) {
@@ -162,7 +162,7 @@ class TransactionController extends Controller
                 }
             }
 
-            // Hitung diskon dari promo (jika ada)
+            
             $discount = 0;
             $promotion = null;
             if (! empty($validated['promotion_id'])) {
@@ -191,7 +191,7 @@ class TransactionController extends Controller
                 'discount' => $discount,
                 'total' => $total,
                 'payment_method' => $validated['payment_method'] ?? null,
-                'status' => 'completed', // langsung completed untuk offline; online bisa disesuaikan jadi 'pending' kalau perlu konfirmasi dulu
+                'status' => 'completed', 
             ]);
 
             foreach ($itemsToCreate as $itemData) {
@@ -201,7 +201,7 @@ class TransactionController extends Controller
                 ]);
             }
 
-            // Potong stok bahan baku sesuai resep + catat histori pergerakan stok
+            
             if (! empty($stockToDeduct)) {
                 foreach ($stockToDeduct as $stockItemId => $qtyNeeded) {
                     $stockItem = $stockItems->get($stockItemId);

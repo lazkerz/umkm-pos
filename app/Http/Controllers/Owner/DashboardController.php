@@ -12,20 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    /**
-     * Dashboard utama Owner (agregat semua toko miliknya):
-     * - Laba Rugi
-     * - Management Stok (alert stok menipis lintas toko)
-     * - Customer Management (ringkasan)
-     * - Store Performance (ranking antar toko)
-     * - Promo Management (ringkasan)
-     */
     public function index(Request $request)
     {
         $owner = $request->user();
         $storeIds = $owner->ownedStores()->pluck('id');
 
-        $period = $request->input('period', 'this_month'); // this_month, last_month, this_year, custom
+        $period = $request->input('period', 'this_month'); 
         [$start, $end] = $this->resolvePeriod($period, $request);
 
         $labaRugi = $this->calculateLabaRugi($storeIds, $start, $end);
@@ -46,10 +38,6 @@ class DashboardController extends Controller
         ));
     }
 
-    /**
-     * LABA RUGI = Total Pendapatan (transaksi completed) - Total Pengeluaran (approved)
-     * dihitung per toko + total keseluruhan, dalam periode tertentu.
-     */
     private function calculateLabaRugi($storeIds, $start, $end): array
     {
         $revenueByStore = Transaction::whereIn('store_id', $storeIds)
@@ -85,9 +73,6 @@ class DashboardController extends Controller
         ];
     }
 
-    /**
-     * MANAGEMENT STOK - alert bahan baku yang stoknya <= minimum_stock, lintas toko
-     */
     private function getLowStockItems($storeIds)
     {
         return StockItem::whereIn('store_id', $storeIds)
@@ -151,7 +136,7 @@ class DashboardController extends Controller
                 $request->input('start_date', now()->startOfMonth()->toDateString()),
                 $request->input('end_date', now()->endOfMonth()->toDateString()),
             ],
-            default => [now()->startOfMonth(), now()->endOfMonth()], // this_month
+            default => [now()->startOfMonth(), now()->endOfMonth()], 
         };
     }
 }

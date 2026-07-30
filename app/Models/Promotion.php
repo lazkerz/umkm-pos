@@ -53,6 +53,6 @@ class Promotion extends Model
         if ($this->type === 'percentage') {
             return $subtotal * ($this->value / 100);
         }
-        return min($this->value, $subtotal); // fixed discount, ga boleh lebih besar dari subtotal
+        return min($this->value, $subtotal); 
     }
 }

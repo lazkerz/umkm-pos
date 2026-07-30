@@ -72,7 +72,7 @@ class Transaction extends Model
         return $query->where('status', 'completed');
     }
 
-    // Buat generate invoice number otomatis, misal: INV-20260724-0001
+    
     public static function generateInvoiceNumber(int $storeId): string
     {
         $date = now()->format('Ymd');

@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // FK ke stores ditambahkan di migration terpisah (add_store_id_foreign_to_users)
-            // karena stores.owner_id juga refer ke users.id (circular dependency)
+            
+            
             $table->unsignedBigInteger('store_id')->nullable()->index();
             $table->string('name');
             $table->string('email')->unique();

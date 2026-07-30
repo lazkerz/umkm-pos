@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('stock_distributions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete(); // toko tujuan
+            $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete(); 
             $table->foreignId('stock_item_id')->constrained('stock_items')->cascadeOnDelete();
             $table->decimal('quantity', 12, 2);
-            $table->foreignId('distributed_by')->constrained('users')->cascadeOnDelete(); // owner
+            $table->foreignId('distributed_by')->constrained('users')->cascadeOnDelete(); 
             $table->date('distribution_date');
             $table->string('note')->nullable();
             $table->timestamps();

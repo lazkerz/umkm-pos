@@ -35,13 +35,13 @@ class User extends Authenticatable
         ];
     }
 
-    // Toko yang dimiliki (kalau role = owner, bisa punya banyak toko)
+    
     public function ownedStores()
     {
         return $this->hasMany(Store::class, 'owner_id');
     }
 
-    // Toko tempat dia bertugas (kalau role = staff)
+    
     public function store()
     {
         return $this->belongsTo(Store::class, 'store_id');

@@ -42,7 +42,7 @@ class Product extends Model
         return $this->hasMany(TransactionItem::class);
     }
 
-    // Resep/BOM - bahan baku apa aja & berapa banyak yang dipakai untuk 1 unit menu ini
+    
     public function recipes()
     {
         return $this->hasMany(ProductRecipe::class);

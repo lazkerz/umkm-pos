@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class StoreController extends Controller
 {
-    // List semua toko milik owner yang login
+    
     public function index(Request $request)
     {
         $stores = $request->user()->ownedStores()->withCount('staff')->latest()->get();
@@ -21,7 +21,7 @@ class StoreController extends Controller
         return view('owner.stores.create');
     }
 
-    // "Create Toko" - user (owner) bisa punya banyak toko
+    
     public function store(Request $request)
     {
         $validated = $request->validate([

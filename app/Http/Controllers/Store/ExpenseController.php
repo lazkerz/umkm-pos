@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
 {
-    // "Input Pengeluaran" - staff/owner input, default status pending kalau staff yang input
+    
     public function index(Store $store)
     {
         $expenses = $store->expenses()->with(['creator', 'approver'])->latest('expense_date')->paginate(20);
@@ -30,7 +30,7 @@ class ExpenseController extends Controller
         $store->expenses()->create([
             ...$validated,
             'created_by' => $user->id,
-            // Owner input sendiri langsung auto-approved, staff input -> pending nunggu approval
+            
             'status' => $user->isOwner() ? 'approved' : 'pending',
             'approved_by' => $user->isOwner() ? $user->id : null,
             'approved_at' => $user->isOwner() ? now() : null,
@@ -43,7 +43,7 @@ class ExpenseController extends Controller
     {
         abort_unless($expense->store_id === $store->id, 404);
 
-        // Cuma bisa hapus kalau masih pending (yang udah approved biarin jadi record histori)
+        
         abort_unless($expense->status === 'pending', 422, 'Pengeluaran yang sudah diproses tidak bisa dihapus.');
 
         $expense->delete();

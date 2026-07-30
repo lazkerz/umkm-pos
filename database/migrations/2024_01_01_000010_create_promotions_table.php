@@ -12,9 +12,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('store_id')->constrained('stores')->cascadeOnDelete();
             $table->string('name');
-            $table->enum('type', ['percentage', 'fixed']); // diskon % atau potongan nominal
+            $table->enum('type', ['percentage', 'fixed']); 
             $table->decimal('value', 12, 2);
-            $table->enum('channel', ['offline', 'online', 'both'])->default('both'); // berlaku di channel mana
+            $table->enum('channel', ['offline', 'online', 'both'])->default('both'); 
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('is_active')->default(true);

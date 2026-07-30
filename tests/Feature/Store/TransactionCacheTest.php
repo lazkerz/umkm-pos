@@ -42,7 +42,7 @@ class TransactionCacheTest extends TestCase
         $store = Store::create(['owner_id' => $owner->id, 'name' => 'Toko Uji']);
         $category = Category::create(['store_id' => $store->id, 'name' => 'Kategori Uji']);
 
-        // Warm the cache with zero products.
+        
         StoreCache::products($store->id);
         $this->assertCount(0, StoreCache::products($store->id));
 

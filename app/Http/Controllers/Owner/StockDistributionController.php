@@ -31,7 +31,7 @@ class StockDistributionController extends Controller
         return view('owner.stock-distributions.create', compact('store', 'stockItems'));
     }
 
-    // "Distribusi Stok" - Owner kirim stok bahan baku ke toko tertentu
+    
     public function store(Request $request, Store $store)
     {
         $validated = $request->validate([
@@ -42,7 +42,7 @@ class StockDistributionController extends Controller
         ]);
 
         DB::transaction(function () use ($validated, $store, $request) {
-            // Catat histori distribusi
+            
             StockDistribution::create([
                 'store_id' => $store->id,
                 'stock_item_id' => $validated['stock_item_id'],
@@ -52,7 +52,7 @@ class StockDistributionController extends Controller
                 'note' => $validated['note'] ?? null,
             ]);
 
-            // Catat sebagai stock movement tipe "distribution" (masuk ke toko)
+            
             StockMovement::create([
                 'store_id' => $store->id,
                 'stock_item_id' => $validated['stock_item_id'],
@@ -62,7 +62,6 @@ class StockDistributionController extends Controller
                 'created_by' => $request->user()->id,
             ]);
 
-            // Update running total quantity di stock_items
             StockItem::where('id', $validated['stock_item_id'])
                 ->where('store_id', $store->id)
                 ->increment('quantity', $validated['quantity']);
