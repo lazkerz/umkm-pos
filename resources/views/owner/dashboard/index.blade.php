@@ -3,14 +3,18 @@
 @section('content')
 
 <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold text-amber-900">Dashboard (Semua Toko)</h1>
+    <h1 class="text-2xl font-bold text-slate-900">Dashboard <span class="text-slate-400 font-medium">·</span> Semua Toko</h1>
 
     <div class="flex items-center gap-2">
-        <a href="{{ route('owner.reports.laba-rugi.pdf') }}?period={{ $period }}" class="bg-red-50 text-red-700 border border-red-200 rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-red-100">📄 PDF</a>
-        <a href="{{ route('owner.reports.laba-rugi.excel') }}?period={{ $period }}" class="bg-green-50 text-green-700 border border-green-200 rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-green-100">📊 Excel</a>
+        <a href="{{ route('owner.reports.laba-rugi.pdf') }}?period={{ $period }}" class="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-slate-50">
+            <x-icon name="report" class="w-4 h-4" /> PDF
+        </a>
+        <a href="{{ route('owner.reports.laba-rugi.excel') }}?period={{ $period }}" class="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-slate-50">
+            <x-icon name="report" class="w-4 h-4" /> Excel
+        </a>
 
-        <form method="GET" class="flex gap-2">
-            <select name="period" onchange="this.form.submit()" class="border rounded-lg px-3 py-1.5 text-sm">
+        <form method="GET">
+            <select name="period" onchange="this.form.submit()" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="this_month" {{ $period === 'this_month' ? 'selected' : '' }}>Bulan Ini</option>
                 <option value="last_month" {{ $period === 'last_month' ? 'selected' : '' }}>Bulan Lalu</option>
                 <option value="this_year" {{ $period === 'this_year' ? 'selected' : '' }}>Tahun Ini</option>
@@ -21,106 +25,89 @@
 
 {{-- LABA RUGI --}}
 <div class="grid grid-cols-3 gap-4 mb-6">
-    <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-xs text-gray-500 uppercase">Total Pendapatan</p>
-        <p class="text-2xl font-bold text-green-700">Rp {{ number_format($labaRugi['total_revenue'], 0, ',', '.') }}</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-xs text-gray-500 uppercase">Total Pengeluaran</p>
-        <p class="text-2xl font-bold text-red-700">Rp {{ number_format($labaRugi['total_expense'], 0, ',', '.') }}</p>
-    </div>
-    <div class="bg-white rounded-lg shadow p-5">
-        <p class="text-xs text-gray-500 uppercase">Laba / Rugi</p>
-        <p class="text-2xl font-bold {{ $labaRugi['total_profit'] >= 0 ? 'text-green-700' : 'text-red-700' }}">
-            Rp {{ number_format($labaRugi['total_profit'], 0, ',', '.') }}
-        </p>
-    </div>
+    <x-stat-card label="Total Pendapatan" tone="positive">Rp {{ number_format($labaRugi['total_revenue'], 0, ',', '.') }}</x-stat-card>
+    <x-stat-card label="Total Pengeluaran" tone="negative">Rp {{ number_format($labaRugi['total_expense'], 0, ',', '.') }}</x-stat-card>
+    <x-stat-card label="Laba / Rugi" :tone="$labaRugi['total_profit'] >= 0 ? 'positive' : 'negative'">
+        Rp {{ number_format($labaRugi['total_profit'], 0, ',', '.') }}
+    </x-stat-card>
 </div>
 
 <div class="grid grid-cols-2 gap-6">
-    {{-- STORE PERFORMANCE --}}
-    <div class="bg-white rounded-lg shadow p-5">
-        <h2 class="font-bold mb-3">🏆 Store Performance</h2>
+    <x-panel title="Store Performance" icon="chart-pie">
         <table class="w-full text-sm">
             <thead>
-                <tr class="text-left text-gray-500 border-b">
-                    <th class="pb-2">Toko</th>
-                    <th class="pb-2 text-right">Omzet</th>
-                    <th class="pb-2 text-right">Transaksi</th>
+                <tr class="text-left text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 font-medium">Toko</th>
+                    <th class="pb-2 font-medium text-right">Omzet</th>
+                    <th class="pb-2 font-medium text-right">Transaksi</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($storePerformance as $row)
-                    <tr class="border-b last:border-0">
-                        <td class="py-2">{{ $row->store->name ?? '-' }}</td>
-                        <td class="py-2 text-right">Rp {{ number_format($row->total_revenue, 0, ',', '.') }}</td>
-                        <td class="py-2 text-right">{{ $row->total_transactions }}</td>
+                    <tr class="border-b border-slate-50 last:border-0">
+                        <td class="py-2 text-slate-700">{{ $row->store->name ?? '-' }}</td>
+                        <td class="py-2 text-right text-slate-700">Rp {{ number_format($row->total_revenue, 0, ',', '.') }}</td>
+                        <td class="py-2 text-right text-slate-700">{{ $row->total_transactions }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="3" class="py-4 text-center text-gray-400">Belum ada transaksi periode ini</td></tr>
+                    <tr><td colspan="3" class="py-4 text-center text-slate-400">Belum ada transaksi periode ini</td></tr>
                 @endforelse
             </tbody>
         </table>
-    </div>
+    </x-panel>
 
-    {{-- MANAGEMENT STOK - ALERT --}}
-    <div class="bg-white rounded-lg shadow p-5">
-        <h2 class="font-bold mb-3">⚠️ Stok Menipis (Lintas Toko)</h2>
+    <x-panel title="Stok Menipis (Lintas Toko)" icon="warning">
         <table class="w-full text-sm">
             <thead>
-                <tr class="text-left text-gray-500 border-b">
-                    <th class="pb-2">Bahan</th>
-                    <th class="pb-2">Toko</th>
-                    <th class="pb-2 text-right">Sisa</th>
+                <tr class="text-left text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 font-medium">Bahan</th>
+                    <th class="pb-2 font-medium">Toko</th>
+                    <th class="pb-2 font-medium text-right">Sisa</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($lowStockItems as $item)
-                    <tr class="border-b last:border-0">
-                        <td class="py-2">{{ $item->name }}</td>
-                        <td class="py-2 text-gray-500">{{ $item->store->name }}</td>
-                        <td class="py-2 text-right text-red-600 font-medium">{{ $item->quantity }} {{ $item->unit->symbol }}</td>
+                    <tr class="border-b border-slate-50 last:border-0">
+                        <td class="py-2 text-slate-700">{{ $item->name }}</td>
+                        <td class="py-2 text-slate-500">{{ $item->store->name }}</td>
+                        <td class="py-2 text-right text-rose-600 font-medium">{{ $item->quantity }} {{ $item->unit->symbol }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="3" class="py-4 text-center text-gray-400">Semua stok aman ✅</td></tr>
+                    <tr><td colspan="3" class="py-4 text-center text-slate-400">Semua stok aman</td></tr>
                 @endforelse
             </tbody>
         </table>
-    </div>
+    </x-panel>
 
-    {{-- CUSTOMER SUMMARY --}}
-    <div class="bg-white rounded-lg shadow p-5">
-        <h2 class="font-bold mb-3">🙋 Customer per Toko</h2>
+    <x-panel title="Customer per Toko" icon="contact">
         <table class="w-full text-sm">
             <tbody>
                 @forelse($customerSummary as $row)
-                    <tr class="border-b last:border-0">
-                        <td class="py-2">Store #{{ $row->store_id }}</td>
-                        <td class="py-2 text-right">{{ $row->total_customers }} customer</td>
+                    <tr class="border-b border-slate-50 last:border-0">
+                        <td class="py-2 text-slate-700">Store #{{ $row->store_id }}</td>
+                        <td class="py-2 text-right text-slate-700">{{ $row->total_customers }} customer</td>
                     </tr>
                 @empty
-                    <tr><td class="py-4 text-center text-gray-400">Belum ada data customer</td></tr>
+                    <tr><td class="py-4 text-center text-slate-400">Belum ada data customer</td></tr>
                 @endforelse
             </tbody>
         </table>
-    </div>
+    </x-panel>
 
-    {{-- PROMO SUMMARY --}}
-    <div class="bg-white rounded-lg shadow p-5">
-        <h2 class="font-bold mb-3">🎁 Promo Aktif</h2>
+    <x-panel title="Promo Aktif" icon="gift">
         <table class="w-full text-sm">
             <tbody>
                 @forelse($promoSummary as $promo)
-                    <tr class="border-b last:border-0">
-                        <td class="py-2">{{ $promo->name }} <span class="text-gray-400">({{ $promo->store->name }})</span></td>
-                        <td class="py-2 text-right text-gray-500">s/d {{ $promo->end_date->format('d M Y') }}</td>
+                    <tr class="border-b border-slate-50 last:border-0">
+                        <td class="py-2 text-slate-700">{{ $promo->name }} <span class="text-slate-400">({{ $promo->store->name }})</span></td>
+                        <td class="py-2 text-right text-slate-500">s/d {{ $promo->end_date->format('d M Y') }}</td>
                     </tr>
                 @empty
-                    <tr><td class="py-4 text-center text-gray-400">Tidak ada promo aktif</td></tr>
+                    <tr><td class="py-4 text-center text-slate-400">Tidak ada promo aktif</td></tr>
                 @endforelse
             </tbody>
         </table>
-    </div>
+    </x-panel>
 </div>
 
 @endsection

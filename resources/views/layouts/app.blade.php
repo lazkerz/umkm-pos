@@ -14,78 +14,105 @@
         body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-800 antialiased">
+<body class="bg-slate-50 text-slate-800 antialiased">
 
 @auth
 <div class="min-h-screen flex">
 
     {{-- SIDEBAR --}}
-    <aside class="no-print w-64 flex-shrink-0 bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 text-amber-50 flex flex-col fixed inset-y-0">
-        <div class="p-5 border-b border-amber-800/60">
-            <div class="flex items-center gap-2">
-                <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-lg shadow-lg shadow-amber-900/40">🏪</div>
+    <aside class="no-print w-64 flex-shrink-0 bg-slate-900 text-slate-300 flex flex-col fixed inset-y-0">
+        <div class="p-5 border-b border-white/10">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-lg bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-950/40">
+                    <x-icon name="store" class="w-5 h-5" />
+                </div>
                 <div>
-                    <h1 class="font-extrabold text-base leading-none tracking-tight">{{ config('app.name') }}</h1>
-                    <p class="text-[11px] text-amber-300/80 leading-none mt-1">Management System</p>
+                    <h1 class="font-bold text-base leading-none tracking-tight text-white">{{ config('app.name') }}</h1>
+                    <p class="text-[11px] text-slate-400 leading-none mt-1">Management System</p>
                 </div>
             </div>
 
-            <div class="mt-4 flex items-center gap-2 bg-amber-900/50 rounded-lg px-3 py-2">
-                <div class="w-7 h-7 rounded-full bg-amber-600 flex items-center justify-center text-xs font-bold uppercase">
+            <div class="mt-4 flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2">
+                <div class="w-7 h-7 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold uppercase">
                     {{ substr(auth()->user()->name, 0, 1) }}
                 </div>
                 <div class="min-w-0">
-                    <p class="text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
-                    <span class="text-[10px] uppercase tracking-wide text-amber-300/80">{{ auth()->user()->role }}</span>
+                    <p class="text-xs font-semibold truncate text-white">{{ auth()->user()->name }}</p>
+                    <span class="text-[10px] uppercase tracking-wide text-slate-400">{{ auth()->user()->role }}</span>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 overflow-y-auto p-3 space-y-0.5 text-sm">
             @php
-                $navItem = function ($route, $label, $icon, $params = []) {
-                    $active = request()->routeIs($route) || request()->routeIs($route.'.*');
-                    $classes = $active
-                        ? 'flex items-center gap-2.5 px-3 py-2 rounded-lg bg-amber-500 text-amber-950 font-semibold shadow-sm'
-                        : 'flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-800/60 text-amber-100/90';
-                    return '<a href="'.route($route, $params).'" class="'.$classes.'"><span class="text-base leading-none">'.$icon.'</span><span>'.$label.'</span></a>';
-                };
+                $navGroups = [];
+
+                if (auth()->user()->isOwner()) {
+                    $navGroups[] = [
+                        'label' => 'Owner',
+                        'items' => [
+                            ['route' => 'owner.dashboard', 'label' => 'Dashboard Semua Toko', 'icon' => 'dashboard'],
+                            ['route' => 'owner.stores.index', 'label' => 'Kelola Toko', 'icon' => 'store'],
+                        ],
+                    ];
+
+                    if (isset($store)) {
+                        $navGroups[] = [
+                            'label' => $store->name,
+                            'items' => [
+                                ['route' => 'owner.stores.staff.index', 'label' => 'Staff / Kasir', 'icon' => 'users', 'params' => $store],
+                                ['route' => 'owner.stores.stock-distributions.index', 'label' => 'Distribusi Stok', 'icon' => 'truck', 'params' => $store],
+                                ['route' => 'owner.stores.expenses.approval', 'label' => 'Approve Pengeluaran', 'icon' => 'check-circle', 'params' => $store],
+                            ],
+                        ];
+                    }
+                }
+
+                if (isset($store)) {
+                    $navGroups[] = [
+                        'label' => 'Menu Toko',
+                        'items' => [
+                            ['route' => 'stores.dashboard', 'label' => 'Dashboard Toko', 'icon' => 'dashboard', 'params' => $store],
+                            ['route' => 'stores.transactions.create', 'label' => 'Kasir', 'icon' => 'cart', 'params' => $store],
+                            ['route' => 'stores.transactions.index', 'label' => 'Riwayat Transaksi', 'icon' => 'list', 'params' => $store],
+                            ['route' => 'stores.reports.index', 'label' => 'Laporan', 'icon' => 'report', 'params' => $store],
+                            ['route' => 'stores.products.index', 'label' => 'Menu', 'icon' => 'bag', 'params' => $store],
+                            ['route' => 'stores.categories.index', 'label' => 'Kategori', 'icon' => 'tag', 'params' => $store],
+                            ['route' => 'stores.stock-items.index', 'label' => 'Management Stok', 'icon' => 'box', 'params' => $store],
+                            ['route' => 'stores.units.index', 'label' => 'Satuan', 'icon' => 'scale', 'params' => $store],
+                            ['route' => 'stores.expenses.index', 'label' => 'Pengeluaran', 'icon' => 'cash', 'params' => $store],
+                            ['route' => 'stores.promotions.index', 'label' => 'Promo', 'icon' => 'gift', 'params' => $store],
+                            ['route' => 'stores.customers.index', 'label' => 'Customer', 'icon' => 'contact', 'params' => $store],
+                        ],
+                    ];
+                }
             @endphp
 
-            @if(auth()->user()->isOwner())
-                <p class="px-3 pt-1 pb-1.5 text-[10px] uppercase tracking-wider text-amber-400/70 font-semibold">Owner</p>
-                {!! $navItem('owner.dashboard', 'Dashboard Semua Toko', '📊') !!}
-                {!! $navItem('owner.stores.index', 'Kelola Toko', '🏪') !!}
-
-                @if(isset($store))
-                    <p class="px-3 pt-4 pb-1.5 text-[10px] uppercase tracking-wider text-amber-400/70 font-semibold">{{ $store->name }}</p>
-                    {!! $navItem('owner.stores.staff.index', 'Staff / Kasir', '👥', $store) !!}
-                    {!! $navItem('owner.stores.stock-distributions.index', 'Distribusi Stok', '🚚', $store) !!}
-                    {!! $navItem('owner.stores.expenses.approval', 'Approve Pengeluaran', '✅', $store) !!}
-                @endif
-            @endif
-
-            @if(isset($store))
-                <p class="px-3 pt-4 pb-1.5 text-[10px] uppercase tracking-wider text-amber-400/70 font-semibold">Menu Toko</p>
-                {!! $navItem('stores.dashboard', 'Dashboard Toko', '📈', $store) !!}
-                {!! $navItem('stores.transactions.create', 'Kasir', '🧾', $store) !!}
-                {!! $navItem('stores.transactions.index', 'Riwayat Transaksi', '📋', $store) !!}
-                {!! $navItem('stores.reports.index', 'Laporan', '🗂️', $store) !!}
-                {!! $navItem('stores.products.index', 'Menu', '🛍️', $store) !!}
-                {!! $navItem('stores.categories.index', 'Kategori', '🏷️', $store) !!}
-                {!! $navItem('stores.stock-items.index', 'Management Stok', '📦', $store) !!}
-                {!! $navItem('stores.units.index', 'Satuan', '📏', $store) !!}
-                {!! $navItem('stores.expenses.index', 'Pengeluaran', '💸', $store) !!}
-                {!! $navItem('stores.promotions.index', 'Promo', '🎁', $store) !!}
-                {!! $navItem('stores.customers.index', 'Customer', '🙋', $store) !!}
-            @endif
+            @foreach($navGroups as $group)
+                <p class="px-3 {{ $loop->first ? 'pt-1' : 'pt-4' }} pb-1.5 text-[10px] uppercase tracking-wider text-slate-500 font-semibold">{{ $group['label'] }}</p>
+                @foreach($group['items'] as $item)
+                    @php
+                        $active = request()->routeIs($item['route']) || request()->routeIs($item['route'].'.*');
+                    @endphp
+                    <a href="{{ route($item['route'], $item['params'] ?? []) }}"
+                        @class([
+                            'flex items-center gap-2.5 px-3 py-2 rounded-lg',
+                            'bg-indigo-500 text-white font-semibold shadow-sm shadow-indigo-950/30' => $active,
+                            'hover:bg-white/5 text-slate-300' => ! $active,
+                        ])>
+                        <x-icon :name="$item['icon']" class="w-4 h-4 flex-shrink-0" />
+                        <span>{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
+            @endforeach
         </nav>
 
-        <div class="p-3 border-t border-amber-800/60">
+        <div class="p-3 border-t border-white/10">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-amber-800/60 text-amber-100/90 text-sm">
-                    <span>🚪</span><span>Logout</span>
+                <button class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-white/5 text-slate-300 text-sm">
+                    <x-icon name="logout" class="w-4 h-4" />
+                    <span>Logout</span>
                 </button>
             </form>
         </div>
@@ -94,29 +121,32 @@
     {{-- MAIN --}}
     <div class="flex-1 ml-64 min-h-screen flex flex-col">
         {{-- TOP BAR --}}
-        <header class="no-print bg-white border-b border-stone-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
-            <div class="text-sm text-stone-500">
+        <header class="no-print bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-10">
+            <div class="text-sm text-slate-500">
                 @if(isset($store))
-                    <span class="font-medium text-stone-700">{{ $store->name }}</span>
+                    <span class="font-medium text-slate-700">{{ $store->name }}</span>
                 @else
-                    <span class="font-medium text-stone-700">Semua Toko</span>
+                    <span class="font-medium text-slate-700">Semua Toko</span>
                 @endif
             </div>
-            <div class="text-xs text-stone-400 flex items-center gap-4">
+            <div class="text-xs text-slate-400 flex items-center gap-4">
                 <span>{{ now()->translatedFormat('l, d F Y') }}</span>
-                <a href="{{ route('profile.edit') }}" class="text-stone-500 hover:text-amber-800 font-medium">👤 Profil Saya</a>
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-1.5 text-slate-500 hover:text-indigo-600 font-medium">
+                    <x-icon name="user" class="w-4 h-4" /> Profil Saya
+                </a>
             </div>
         </header>
 
         <main class="flex-1 p-6">
             @if(session('success'))
-                <div class="mb-4 flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm">
-                    <span>✅</span> {{ session('success') }}
+                <div class="mb-4 flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm">
+                    <x-icon name="check-circle" class="w-4 h-4 flex-shrink-0" /> {{ session('success') }}
                 </div>
             @endif
 
             @if($errors->any())
-                <div class="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm">
+                <div class="mb-4 flex items-start gap-2 bg-rose-50 border border-rose-200 text-rose-800 px-4 py-3 rounded-xl text-sm">
+                    <x-icon name="warning" class="w-4 h-4 flex-shrink-0 mt-0.5" />
                     <ul class="list-disc list-inside space-y-0.5">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
