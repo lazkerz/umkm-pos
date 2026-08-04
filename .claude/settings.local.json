@@ -3,7 +3,15 @@
     "allow": [
       "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); git --version; Test-Path \".gitignore\")",
       "PowerShell(git init)",
-      "PowerShell(git add -A)"
+      "PowerShell(git add -A)",
+      "Bash(git commit *)",
+      "PowerShell(& \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" auth status 2>&1)",
+      "Bash(git config *)",
+      "PowerShell(php -v 2>&1)",
+      "PowerShell(php artisan --version 2>&1)",
+      "Bash(php -v)",
+      "Bash(php artisan *)",
+      "Bash(php -l app/Http/Controllers/Store/TransactionController.php)"
     ]
   }
 }
