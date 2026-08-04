@@ -20,7 +20,12 @@
                 @forelse($expenses as $e)
                     <tr class="border-b last:border-0">
                         <td class="py-2">{{ $e->expense_date->format('d M Y') }}</td>
-                        <td class="py-2">{{ $e->category }}</td>
+                        <td class="py-2">
+                            {{ $e->category }}
+                            @if($e->stockItem)
+                                <span class="block text-xs text-gray-400">+{{ rtrim(rtrim($e->restock_quantity, '0'), '.') }} {{ $e->stockItem->unit->symbol }} {{ $e->stockItem->name }}</span>
+                            @endif
+                        </td>
                         <td class="py-2 text-right">Rp {{ number_format($e->amount, 0, ',', '.') }}</td>
                         <td class="py-2">
                             <span @class([
@@ -67,10 +72,23 @@
                 <label class="block text-xs font-medium mb-1">Deskripsi</label>
                 <textarea name="description" class="w-full border rounded px-3 py-1.5 text-sm"></textarea>
             </div>
+
+            <div class="border-t pt-3">
+                <label class="block text-xs font-medium mb-1">Belanja Bahan Baku? (opsional)</label>
+                <p class="text-xs text-gray-400 mb-2">Kalau diisi, stok bahan baku otomatis nambah begitu pengeluaran ini disetujui.</p>
+                <select name="stock_item_id" class="w-full border rounded px-3 py-1.5 text-sm mb-2">
+                    <option value="">Bukan belanja bahan baku</option>
+                    @foreach($stockItems as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->unit->symbol }})</option>
+                    @endforeach
+                </select>
+                <input type="number" step="0.01" name="restock_quantity" placeholder="Jumlah yang dibeli" class="w-full border rounded px-3 py-1.5 text-sm">
+            </div>
+
             <button type="submit" class="w-full bg-amber-800 text-white py-2 rounded text-sm hover:bg-amber-900">
                 Catat Pengeluaran
             </button>
-            <p class="text-xs text-gray-400">*Kalau kamu Staff, pengeluaran ini nunggu approval Owner dulu.</p>
+            <p class="text-xs text-gray-400">*Kalau kamu Staff, pengeluaran ini nunggu approval Owner dulu (stok juga baru nambah setelah disetujui).</p>
         </form>
     </div>
 </div>

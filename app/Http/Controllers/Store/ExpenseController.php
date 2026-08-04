@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Store;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ExpenseController extends Controller
 {
-    
+
     public function index(Store $store)
     {
-        $expenses = $store->expenses()->with(['creator', 'approver'])->latest('expense_date')->paginate(20);
+        $expenses = $store->expenses()->with(['creator', 'approver', 'stockItem'])->latest('expense_date')->paginate(20);
+        $stockItems = $store->stockItems()->with('unit')->orderBy('name')->get();
 
-        return view('store.expenses.index', compact('store', 'expenses'));
+        return view('store.expenses.index', compact('store', 'expenses', 'stockItems'));
     }
 
     public function store(Request $request, Store $store)
@@ -23,18 +25,24 @@ class ExpenseController extends Controller
             'amount' => ['required', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
             'expense_date' => ['required', 'date'],
+            'stock_item_id' => ['nullable', Rule::exists('stock_items', 'id')->where('store_id', $store->id)],
+            'restock_quantity' => ['nullable', 'required_with:stock_item_id', 'numeric', 'min:0.01'],
         ]);
 
         $user = $request->user();
 
-        $store->expenses()->create([
+        $expense = $store->expenses()->create([
             ...$validated,
             'created_by' => $user->id,
-            
+
             'status' => $user->isOwner() ? 'approved' : 'pending',
             'approved_by' => $user->isOwner() ? $user->id : null,
             'approved_at' => $user->isOwner() ? now() : null,
         ]);
+
+        if ($expense->status === 'approved') {
+            $expense->applyRestock($user->id);
+        }
 
         return back()->with('success', 'Pengeluaran berhasil dicatat.');
     }

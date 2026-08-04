@@ -13,7 +13,7 @@ class ExpenseApprovalController extends Controller
     {
         $pendingExpenses = $store->expenses()
             ->pending()
-            ->with('creator')
+            ->with(['creator', 'stockItem.unit'])
             ->latest('expense_date')
             ->get();
 
@@ -35,6 +35,8 @@ class ExpenseApprovalController extends Controller
             'approved_by' => $request->user()->id,
             'approved_at' => now(),
         ]);
+
+        $expense->applyRestock($request->user()->id);
 
         return back()->with('success', 'Pengeluaran disetujui.');
     }

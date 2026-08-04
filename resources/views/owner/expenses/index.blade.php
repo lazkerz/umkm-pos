@@ -22,7 +22,12 @@
             @forelse($pendingExpenses as $expense)
                 <tr class="border-b last:border-0">
                     <td class="py-2">{{ $expense->expense_date->format('d M Y') }}</td>
-                    <td class="py-2">{{ $expense->category }}</td>
+                    <td class="py-2">
+                        {{ $expense->category }}
+                        @if($expense->stockItem)
+                            <span class="block text-xs text-amber-700">+{{ rtrim(rtrim($expense->restock_quantity, '0'), '.') }} {{ $expense->stockItem->unit->symbol }} {{ $expense->stockItem->name }} saat disetujui</span>
+                        @endif
+                    </td>
                     <td class="py-2 text-gray-500">{{ $expense->description ?? '-' }}</td>
                     <td class="py-2 text-right">Rp {{ number_format($expense->amount, 0, ',', '.') }}</td>
                     <td class="py-2 text-gray-500">{{ $expense->creator->name }}</td>
