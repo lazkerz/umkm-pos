@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Trust the platform's reverse proxy (Railway, etc.) so Laravel knows the
+        // original request was HTTPS - otherwise generated asset/route URLs come
+        // back as http:// and get blocked as mixed content by the browser.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'owner' => EnsureUserIsOwner::class,
             'store.access' => EnsureStoreAccess::class,
