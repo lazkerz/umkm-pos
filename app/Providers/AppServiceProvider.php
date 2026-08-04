@@ -12,6 +12,7 @@ use App\Observers\ProductObserver;
 use App\Observers\ProductRecipeObserver;
 use App\Observers\PromotionObserver;
 use App\Observers\UnitObserver;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        
+
     }
 
     /**
@@ -34,5 +35,13 @@ class AppServiceProvider extends ServiceProvider
         Unit::observe(UnitObserver::class);
         Promotion::observe(PromotionObserver::class);
         ProductRecipe::observe(ProductRecipeObserver::class);
+
+        // Behind a TLS-terminating reverse proxy (Railway, etc.), trustProxies alone
+        // can still miss the forwarded-proto header depending on the platform - force
+        // https explicitly whenever APP_URL says the app is served over https, so
+        // generated asset()/route() URLs never come back as http:// (mixed content).
+        if (str_starts_with(config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
     }
 }
