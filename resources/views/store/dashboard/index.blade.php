@@ -14,13 +14,13 @@
     </form>
 </div>
 
-<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <x-stat-card label="Total Customer">{{ $totalCustomers }}</x-stat-card>
     <x-stat-card label="Customer Baru">{{ $newCustomersThisPeriod }}</x-stat-card>
     <x-stat-card label="Total Penjualan (periode ini)" tone="positive">Rp {{ number_format($salesReport->sum('total_sales'), 0, ',', '.') }}</x-stat-card>
 </div>
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <x-panel title="Report Penjualan" icon="chart-pie">
         <table class="w-full text-sm">
             <thead>
@@ -61,7 +61,7 @@
         </table>
     </x-panel>
 
-    <x-panel title="Data Customer (Top Spender)" icon="contact" class="col-span-2">
+    <x-panel title="Data Customer (Top Spender)" icon="contact" class="lg:col-span-2">
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-slate-400 border-b border-slate-100">

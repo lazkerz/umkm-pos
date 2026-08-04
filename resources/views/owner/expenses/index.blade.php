@@ -7,6 +7,7 @@
 
 <div class="bg-white rounded-lg shadow p-5 mb-6">
     <h2 class="font-bold mb-3">🕐 Menunggu Persetujuan ({{ $pendingExpenses->count() }})</h2>
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead>
             <tr class="text-left text-gray-500 border-b">
@@ -47,10 +48,12 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 
 <div class="bg-white rounded-lg shadow p-5">
     <h2 class="font-bold mb-3">Riwayat Approval</h2>
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead>
             <tr class="text-left text-gray-500 border-b">
@@ -79,6 +82,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
     <div class="mt-3">{{ $history->links() }}</div>
 </div>
 

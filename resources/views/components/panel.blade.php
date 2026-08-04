@@ -8,5 +8,7 @@
         <h2 class="font-semibold text-sm text-slate-800">{{ $title }}</h2>
     </div>
 
-    {{ $slot }}
+    <div class="overflow-x-auto">
+        {{ $slot }}
+    </div>
 </div>

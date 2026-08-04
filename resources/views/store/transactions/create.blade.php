@@ -13,7 +13,7 @@
         csrfToken: @js(csrf_token()),
     })">
 
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex flex-wrap gap-3 justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-slate-900">
             Kasir <span class="text-slate-400 font-medium">·</span> <span class="capitalize">{{ $channel }}</span>
         </h1>
@@ -23,9 +23,9 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- PILIHAN MENU --}}
-        <div class="col-span-2">
+        <div class="lg:col-span-2">
             <div class="relative mb-4">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
                     <x-icon name="search" class="w-4 h-4" />
@@ -45,7 +45,7 @@
                 </template>
             </div>
 
-            <div class="grid grid-cols-3 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <template x-for="product in filteredProducts" :key="product.id">
                     <button type="button" @click="addToCart(product.id)"
                         class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 text-left hover:border-indigo-400 hover:shadow-md transition">
@@ -53,14 +53,14 @@
                         <p class="text-indigo-600 font-bold text-sm mt-1" x-text="formatMoney(product.price)"></p>
                     </button>
                 </template>
-                <p x-show="filteredProducts.length === 0" class="col-span-3 text-slate-400 text-sm text-center py-8">
+                <p x-show="filteredProducts.length === 0" class="col-span-full text-slate-400 text-sm text-center py-8">
                     Tidak ada produk yang cocok.
                 </p>
             </div>
         </div>
 
         {{-- CART / INPUT --}}
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 h-fit sticky top-6">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 h-fit lg:sticky lg:top-6">
             <h2 class="flex items-center gap-2 font-semibold text-sm text-slate-800 mb-3">
                 <x-icon name="cart" class="w-4 h-4 text-indigo-500" /> Pesanan
             </h2>
@@ -148,7 +148,7 @@
 
     {{-- QUICK ADD CUSTOMER MODAL --}}
     <div x-show="quickAdd.open" x-cloak
-        class="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50" @click.self="quickAdd.open = false">
+        class="fixed inset-0 bg-slate-900/40 flex items-center justify-center z-50 p-4" @click.self="quickAdd.open = false">
         <div class="bg-white rounded-xl shadow-xl p-5 w-full max-w-sm">
             <h3 class="font-semibold text-slate-800 mb-3">Tambah Customer Baru</h3>
 

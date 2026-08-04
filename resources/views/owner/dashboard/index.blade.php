@@ -24,7 +24,7 @@
 </div>
 
 {{-- LABA RUGI --}}
-<div class="grid grid-cols-3 gap-4 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
     <x-stat-card label="Total Pendapatan" tone="positive">Rp {{ number_format($labaRugi['total_revenue'], 0, ',', '.') }}</x-stat-card>
     <x-stat-card label="Total Pengeluaran" tone="negative">Rp {{ number_format($labaRugi['total_expense'], 0, ',', '.') }}</x-stat-card>
     <x-stat-card label="Laba / Rugi" :tone="$labaRugi['total_profit'] >= 0 ? 'positive' : 'negative'">
@@ -32,7 +32,7 @@
     </x-stat-card>
 </div>
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <x-panel title="Store Performance" icon="chart-pie">
         <table class="w-full text-sm">
             <thead>

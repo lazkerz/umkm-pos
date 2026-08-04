@@ -2,15 +2,16 @@
 @section('title', 'Transaksi - ' . $store->name)
 @section('content')
 
-<div class="flex justify-between items-center mb-6">
+<div class="flex flex-wrap gap-3 justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-amber-900">Riwayat Transaksi</h1>
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
         <a href="{{ route('stores.transactions.create', $store) }}?channel=offline" class="bg-amber-800 text-white px-4 py-2 rounded text-sm hover:bg-amber-900">+ Transaksi Offline</a>
         <a href="{{ route('stores.transactions.create', $store) }}?channel=online" class="bg-amber-600 text-white px-4 py-2 rounded text-sm hover:bg-amber-700">+ Order Online</a>
     </div>
 </div>
 
 <div class="bg-white rounded-lg shadow p-5">
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead>
             <tr class="text-left text-gray-500 border-b">
@@ -46,6 +47,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
     <div class="mt-3">{{ $transactions->links() }}</div>
 </div>
 
