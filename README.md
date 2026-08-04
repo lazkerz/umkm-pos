@@ -1,58 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# UMKM POS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi POS (kasir) + manajemen inventory + keuangan multi-toko untuk bisnis UMKM (awalnya dibuat untuk kedai kopi, sekarang digeneralisasi supaya bisa dipakai jenis UMKM apa saja — resep/BOM bersifat opsional per produk).
 
-## About Laravel
+Stack: **Laravel 13 (PHP 8.3)**, Blade + Alpine.js + Tailwind CSS (Vite), MySQL, auth pakai Laravel Breeze.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Daftar Isi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Konsep Utama](#konsep-utama)
+- [Fitur](#fitur)
+- [Cara Menjalankan di Lokal](#cara-menjalankan-di-lokal)
+- [Login Demo](#login-demo)
+- [Struktur & Arsitektur](#struktur--arsitektur)
+- [Testing](#testing)
+- [Branch & Alur Kerja](#branch--alur-kerja)
+- [Yang Belum Dikerjakan / Backlog](#yang-belum-dikerjakan--backlog)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Konsep Utama
 
-## Learning Laravel
+Setiap **User** punya role `owner` atau `staff`:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Owner** bisa punya banyak **Store** (cabang/toko) dan dapat dashboard agregat semua tokonya.
+- **Staff** terikat ke satu Store saja dan cuma bisa akses toko itu.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Hampir semua route ada di bawah `stores/{store}/...` dan dijaga dua middleware:
+- `owner` — harus role owner (buat kelola toko, staff, distribusi stok, approve pengeluaran).
+- `store.access` — owner cuma boleh akses toko miliknya, staff cuma boleh akses toko tempat dia kerja.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Karena route pakai model binding biasa (bukan scoped), setiap controller yang nyentuh resource anak toko (produk, kategori, stok, dst) **selalu** cek manual:
+```php
+abort_unless($resource->store_id === $store->id, 404);
+```
+Ini pola yang disengaja dan konsisten dipakai di seluruh codebase — kalau nambah resource baru yang scoped ke toko, ikuti pola yang sama.
 
-## Agentic Development
+## Fitur
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- **Kasir (POS)** — pilih produk (search + filter kategori), keranjang reaktif (Alpine.js), pilih/tambah customer cepat tanpa reload, warning stok non-blocking kalau bahan baku kurang, checkout via AJAX (kalau gagal validasi, keranjang **tidak hilang** — beda dari versi lama yang full-page reload).
+- **Manajemen stok** — bahan baku (`StockItem`) dengan audit trail tiap perubahan (`StockMovement`), resep/BOM per produk (`ProductRecipe`) — opsional, produk tanpa resep = item jual langsung/retail biasa.
+- **Distribusi stok** Owner → Store, dengan pencatatan movement otomatis.
+- **Promo** — persentase/nominal tetap, per channel (offline/online/keduanya), dengan rentang tanggal aktif.
+- **Pengeluaran (Expense)** dengan alur approval — dibuat staff jadi `pending`, dibuat owner otomatis `approved`.
+- **Laporan Laba Rugi** per toko & agregat semua toko, bisa export PDF & Excel.
+- **Caching** — data referensi (produk, kategori, promo) di-cache per toko biar kasir nggak query database berulang tiap buka halaman. Auto-invalidate begitu ada perubahan data (lewat Model Observer).
+
+## Cara Menjalankan di Lokal
 
 ```bash
-composer require laravel/boost --dev
+# Clone & masuk folder
+git clone https://github.com/lazkerz/umkm-pos.git
+cd umkm-pos
 
-php artisan boost:install
+# Setup otomatis: copy .env, generate key, migrate, install & build JS
+composer run setup
+
+# Jalankan dev server (Laravel serve + queue worker + log viewer + vite), satu terminal
+composer run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Butuh: PHP 8.3+, Composer, Node.js, dan MySQL (database `umkm_kopi`, sesuaikan kredensial di `.env`).
 
-## Contributing
+Perintah lain yang sering dipakai:
+```bash
+php artisan migrate:fresh --seed   # reset DB + isi data unit global + data demo
+php artisan test                   # jalankan semua test
+php artisan test --filter=NamaTest # jalankan satu test tertentu
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Login Demo
 
-## Code of Conduct
+Setelah `migrate:fresh --seed`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role  | Email                          | Password   |
+|-------|--------------------------------|------------|
+| Owner | `owner@umkmkopi.test`          | `password` |
+| Staff | `kasir.medan@umkmkopi.test`    | `password` |
 
-## Security Vulnerabilities
+## Struktur & Arsitektur
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Ringkasan model domain (semua di `app/Models/`):
 
-## License
+- `Store` — cabang/toko, dimiliki satu `User` (owner).
+- `Category` / `Product` — menu/produk per toko.
+- `Unit` — satuan; `store_id = null` berarti satuan global (dipakai semua toko), diisi berarti satuan custom milik toko itu.
+- `StockItem` — stok bahan baku per toko, ubah `quantity` **cuma** lewat increment/decrement + catat `StockMovement`, jangan pernah edit langsung.
+- `ProductRecipe` — BOM: berapa banyak `StockItem` dipakai untuk 1 unit `Product`.
+- `Promotion`, `Expense`, `Customer`, `Transaction`/`TransactionItem` — cukup jelas dari namanya.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Alur checkout (`app/Http/Controllers/Store/TransactionController.php::store()`) adalah bagian paling kritis: dalam satu `DB::transaction()`, dia mengunci baris `StockItem` yang relevan (`lockForUpdate()`) dan validasi stok cukup **sebelum** menulis apa pun — supaya nggak oversell kalau ada dua transaksi jalan bersamaan. Kalau mau ubah logic checkout/stok, jaga urutan ini: lock → validasi → baru tulis.
+
+Layer caching ada di `app/Support/StoreCache.php` (helper terpusat, cache-nya berupa array biasa, bukan objek Eloquent — supaya aman disimpan/dibaca ulang) dan `app/Observers/*.php` (auto-invalidate cache begitu data terkait berubah).
+
+Dokumentasi lebih detail & konvensi ada di [`CLAUDE.md`](CLAUDE.md) — kalau kamu pakai Claude Code, file itu otomatis kebaca sebagai konteks project.
+
+## Testing
+
+```bash
+php artisan test
+```
+
+Test domain (checkout, caching, customer quick-add) ada di `tests/Feature/Store/`. Test auth/profile bawaan Breeze ada beberapa yang belum disesuaikan dengan flow custom aplikasi ini (contoh: redirect setelah register beda dari default Breeze) — itu bukan bug baru, sudah begitu dari awal.
+
+## Branch & Alur Kerja
+
+- `master` — branch utama/stabil.
+- `develop` — tempat kerja fitur/update sebelum masuk `master`.
+- `athila` — branch kerja collaborator.
+
+Alur yang disarankan: kerja di branch masing-masing → push → buka Pull Request ke `develop` → setelah direview, `develop` di-merge ke `master`.
+
+## Yang Belum Dikerjakan / Backlog
+
+- Redis untuk caching (saat ini masih pakai cache driver `database`, sudah cukup untuk skala sekarang, tapi bisa di-upgrade tanpa ubah kode).
+- Held/parked order di kasir (simpan transaksi belum selesai, lanjut nanti).
+- Struk PDF (sekarang baru bisa print langsung dari browser).
+- Polish visual/UI secara keseluruhan — tampilan masih fungsional tapi belum "production-polished".
