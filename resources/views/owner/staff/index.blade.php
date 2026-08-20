@@ -5,9 +5,10 @@
 <h1 class="text-2xl font-bold text-amber-900 mb-1">Staff / Kasir</h1>
 <p class="text-sm text-gray-500 mb-6">Toko: {{ $store->name }}</p>
 
-<div class="grid grid-cols-3 gap-6">
-    <div class="col-span-2 bg-white rounded-lg shadow p-5">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-lg shadow p-5">
         <h2 class="font-bold mb-3">Daftar Staff</h2>
+        <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-gray-500 border-b">
@@ -39,6 +40,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-5">

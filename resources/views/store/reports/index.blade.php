@@ -2,7 +2,7 @@
 @section('title', 'Laporan - ' . $store->name)
 @section('content')
 
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-wrap gap-3 items-center justify-between mb-6">
     <div>
         <h1 class="text-2xl font-bold text-stone-800">Laporan</h1>
         <p class="text-sm text-stone-500">{{ $store->name }}</p>
@@ -18,7 +18,7 @@
     </form>
 </div>
 
-<div class="grid grid-cols-3 gap-4 mb-8">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
     <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
         <p class="text-xs text-stone-400 uppercase font-medium">Total Pendapatan</p>
         <p class="text-2xl font-bold text-green-700 mt-1">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
@@ -33,7 +33,7 @@
     </div>
 </div>
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
     {{-- LAPORAN LABA RUGI --}}
     <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
         <h2 class="font-bold text-stone-800 mb-1">📊 Laporan Laba Rugi</h2>

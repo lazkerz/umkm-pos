@@ -4,7 +4,7 @@
 
 <h1 class="text-2xl font-bold text-stone-800 mb-6">Profil Saya</h1>
 
-<div class="grid grid-cols-2 gap-6 max-w-3xl">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
     {{-- INFO PROFIL --}}
     <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
         <h2 class="font-bold text-stone-800 mb-1">Informasi Profil</h2>

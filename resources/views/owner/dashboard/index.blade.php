@@ -2,10 +2,10 @@
 @section('title', 'Dashboard Owner')
 @section('content')
 
-<div class="flex justify-between items-center mb-6">
+<div class="flex flex-wrap gap-3 justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-slate-900">Dashboard <span class="text-slate-400 font-medium">·</span> Semua Toko</h1>
 
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
         <a href="{{ route('owner.reports.laba-rugi.pdf') }}?period={{ $period }}" class="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg px-3 py-1.5 text-sm font-medium hover:bg-slate-50">
             <x-icon name="report" class="w-4 h-4" /> PDF
         </a>

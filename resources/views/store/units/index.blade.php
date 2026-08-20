@@ -5,8 +5,8 @@
 <h1 class="text-2xl font-bold text-amber-900 mb-1">Satuan Stok</h1>
 <p class="text-sm text-gray-500 mb-6">Pilih dari satuan default, atau bikin satuan custom sendiri untuk toko ini.</p>
 
-<div class="grid grid-cols-3 gap-6">
-    <div class="col-span-2 space-y-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
         {{-- DEFAULT UNITS --}}
         <div class="bg-white rounded-lg shadow p-5">
             <h2 class="font-bold mb-3">📏 Satuan Default (bisa dipakai semua toko)</h2>
@@ -22,6 +22,7 @@
         {{-- CUSTOM UNITS --}}
         <div class="bg-white rounded-lg shadow p-5">
             <h2 class="font-bold mb-3">✨ Satuan Custom Toko Ini</h2>
+            <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
                     <tr class="text-left text-gray-500 border-b">
@@ -47,6 +48,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 

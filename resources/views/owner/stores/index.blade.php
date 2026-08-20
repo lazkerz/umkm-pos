@@ -2,14 +2,14 @@
 @section('title', 'Kelola Toko')
 @section('content')
 
-<div class="flex justify-between items-center mb-6">
+<div class="flex flex-wrap gap-3 justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-amber-900">Toko Saya</h1>
     <a href="{{ route('owner.stores.create') }}" class="bg-amber-800 text-white px-4 py-2 rounded text-sm hover:bg-amber-900">
         + Buat Toko Baru
     </a>
 </div>
 
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     @forelse($stores as $store)
         <div class="bg-white rounded-lg shadow p-5">
             <div class="flex justify-between items-start">
@@ -27,7 +27,7 @@
             </div>
         </div>
     @empty
-        <p class="text-gray-400 col-span-3">Kamu belum punya toko. Yuk buat yang pertama!</p>
+        <p class="text-gray-400 col-span-full">Kamu belum punya toko. Yuk buat yang pertama!</p>
     @endforelse
 </div>
 

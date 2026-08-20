@@ -4,8 +4,9 @@
 
 <h1 class="text-2xl font-bold text-amber-900 mb-6">Customer Management</h1>
 
-<div class="grid grid-cols-3 gap-6">
-    <div class="col-span-2 bg-white rounded-lg shadow p-5">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-lg shadow p-5">
+        <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-gray-500 border-b">
@@ -33,6 +34,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
         <div class="mt-3">{{ $customers->links() }}</div>
     </div>
 

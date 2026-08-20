@@ -2,13 +2,14 @@
 @section('title', 'Management Stok - ' . $store->name)
 @section('content')
 
-<div class="flex justify-between items-center mb-6">
+<div class="flex flex-wrap gap-3 justify-between items-center mb-6">
     <h1 class="text-2xl font-bold text-amber-900">Management Stok (Bahan Baku)</h1>
     <a href="{{ route('stores.units.index', $store) }}" class="text-sm text-amber-800 hover:underline">⚙️ Kelola Satuan</a>
 </div>
 
-<div class="grid grid-cols-3 gap-6">
-    <div class="col-span-2 bg-white rounded-lg shadow p-5">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-lg shadow p-5">
+        <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
                 <tr class="text-left text-gray-500 border-b">
@@ -51,6 +52,7 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
     </div>
 
     <div class="bg-white rounded-lg shadow p-5">
