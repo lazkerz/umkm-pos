@@ -12,7 +12,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# GitHub's zipball API occasionally 504s under load on shared build infra -
+# retry a few times before giving up instead of failing the whole build.
+RUN for i in 1 2 3 4 5; do \
+        composer install --no-dev --optimize-autoloader --no-interaction && break; \
+        echo "composer install failed (attempt $i), retrying..."; \
+        sleep 10; \
+    done
 RUN npm install && npm run build && rm -rf node_modules
 
 RUN chmod -R 775 storage bootstrap/cache
